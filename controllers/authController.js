@@ -6,15 +6,8 @@ const nodemailer = require("nodemailer");
 const rn = require("random-number");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 exports.register = async (req, res, next) => {
-  const {
-    name,
-    email,
-    password,
-    phone,
-    gender,
-    cardId,
-    position
-  } = req.body;
+  // nhan thong tin tu nguoi dung
+  const { name, email, password, phone, gender, cardId, position } = req.body;
 
   console.log(req.body);
   try {
@@ -24,6 +17,7 @@ exports.register = async (req, res, next) => {
       err.statusCode = 400;
       return next(err);
     } else {
+      // bao mat mat khau
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = new User({
         name,
@@ -32,12 +26,12 @@ exports.register = async (req, res, next) => {
         phone,
         gender,
         cardId,
-        position
+        position,
       });
-  
+
       // Save the user to the database
       await newUser.save();
-  
+
       // Respond with the created user
       res.status(200).json({ user: newUser });
     }
@@ -62,7 +56,7 @@ exports.login = async (req, res, next) => {
         token,
         userName: user.name,
         userId: user._id,
-        user_position: user.position
+        user_position: user.position,
       });
     } else {
       const err = new Error("Mật khẩu không chính xác - Vui lòng nhập lại");
@@ -190,13 +184,13 @@ exports.updateNewPasswordUser = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
   try {
-      const {userId} = req.params;
-      await User.findByIdAndDelete(userId)
-      res.status(200).json({
-          status: 'success',
-          message: 'User has been deleted'
-      })
+    const { userId } = req.params;
+    await User.findByIdAndDelete(userId);
+    res.status(200).json({
+      status: "success",
+      message: "User has been deleted",
+    });
   } catch (error) {
-      res.json(error)
+    res.json(error);
   }
-}
+};
